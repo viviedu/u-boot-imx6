@@ -212,8 +212,8 @@
     "else " \
       "setenv mmcpart 1; " \
     "fi; " \
-    /* everything else is loaded from root partition (${mmcpart}) */ \
-    "echo INFO: loading uEnv.txt from root partition; " \
+    /* everything else is loaded from root partition */ \
+    "echo INFO: loading uEnv.txt from root partition (${mmcpart}); " \
     "if run loadenv; then " \
       "env import -t ${loadaddr} ${filesize}; " \
     "fi; " \
