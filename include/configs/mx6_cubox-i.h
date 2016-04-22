@@ -184,6 +184,7 @@
   /* how to load env from file */ \
   "setenv envfile uEnv.txt; " \
   "setenv loadenv 'load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${prefix}${envfile};'; " \
+  "setenv loadusbenv 'load usb 0:1 ${loadaddr} ${prefix}${envfile};'; " \
   /* how to load splash image */ \
   "setenv splashfile splash.bmp; " \
   "setenv splashaddr 0x17000000; " \
@@ -193,15 +194,27 @@
   "setenv mmcargs 'setenv mmcroot ${mmcroot};'; " \
   /* how to set bootargs */ \
   "setenv loadbootargs 'setenv bootargs root=${mmcroot} rootfstype=ext4 rootflags=data=writeback rootwait ro fsck.mode=force fsck.repair=yes console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 quiet consoleblank=0;'; " \
+  "setenv loadusbbootargs 'setenv bootargs root=/dev/sda1 rootfstype=ext4 rootflags=data=writeback rootwait ro fsck.mode=force fsck.repair=yes console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 quiet consoleblank=0;'; " \
   /* how to load kernel image */ \
   "setenv image zImage; " \
   "setenv bootm_size 0x10000000; " \
   "setenv loadimage 'load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${prefix}${image};'; " \
+  "setenv loadusbimage 'load usb 0:1 ${loadaddr} ${prefix}${image};'; " \
   /* how to load device tree*/ \
   "setenv fdtfile imx6q-hummingboard2.dtb; " \
   "setenv fdtaddr 0x18000000; " \
   "setenv loadfdt 'load mmc ${mmcdev}:${mmcpart} ${fdtaddr} ${prefix}${fdtfile};'; " \
+  "setenv loadusbfdt 'load usb 0:1 ${fdtaddr} ${prefix}${fdtfile};'; " \
   /* actual script starts here */ \
+  "echo INFO: attempting USB recovery; " \
+  "usb start; " \
+  "run loadusbenv; " \
+  "if run loadusbimage; then " \
+    "if run loadusbfdt; then " \
+      "run loadusbbootargs; " \
+      "bootz ${loadaddr} - ${fdtaddr}; " \
+    "fi; " \
+  "fi; " \
   "echo INFO: scanning for MMC; " \
   "mmc dev ${mmcdev}; " \
   "if mmc rescan; then " \
