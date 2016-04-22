@@ -264,7 +264,7 @@ CPPFLAGS += -I$(TOPDIR)/include
 CPPFLAGS += -fno-builtin -ffreestanding -nostdinc	\
 	-isystem $(gccincdir) -pipe $(PLATFORM_CPPFLAGS)
 
-CFLAGS := $(CPPFLAGS) -Wall -Wstrict-prototypes
+CFLAGS := $(CPPFLAGS) -Wall -Wstrict-prototypes $(PLATFORM_NO_UNALIGNED)
 
 ifdef BUILD_TAG
 CFLAGS += -DBUILD_TAG='"$(BUILD_TAG)"'

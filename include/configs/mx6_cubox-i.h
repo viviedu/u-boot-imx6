@@ -59,7 +59,7 @@
 #define CONFIG_CMD_SETEXPR
 #define CONFIG_CMD_MEMTEST
 
-#define CONFIG_BOOTDELAY		3
+#define CONFIG_BOOTDELAY		1
 
 #define CONFIG_SYS_MEMTEST_START	0x10000000
 #define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_MEMTEST_START + 500 * SZ_1M)
@@ -159,176 +159,79 @@
 #endif
 
 #define CONFIG_PREBOOT \
-	"if hdmidet; then " \
-		USB_BOOTCMD \
-		"setenv stdout serial,vga; " \
-		"setenv stderr serial,vga; " \
-	"else " \
-		"setenv stdin serial; " \
-		"setenv stdout serial; " \
-		"setenv stderr serial; " \
-	"fi;"
+  "setenv stdin serial; " \
+  "setenv stdout serial; " \
+  "setenv stderr serial; "
+
+
+/* Vivi custom settings */
+#define CONFIG_CMD_BMP
+#define CONFIG_SILENT_CONSOLE
+#define CONFIG_SILENT_U_BOOT_ONLY
 
 #define CONFIG_SYS_CONSOLE_IS_IN_ENV
-
-#define CONFIG_EXTRA_ENV_SETTINGS \
-        "script=boot.scr\0" \
-        "bootfile=auto\0" \
-        "bootenv=uEnv.txt\0" \
-        "boot_prefixes=/ /boot/\0" \
-        "console=ttymxc0\0" \
-        "splashpos=m,m\0" \
-        "fdt_high=0xffffffff\0" \
-        "initrd_high=0xffffffff\0" \
-        "fdt_addr=0x18000000\0" \
-        "boot_fdt=try\0" \
-        "ip_dyn=yes\0" \
-        "mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
-        "mmcpart=1\0" \
-        "mmcroot=/dev/mmcblk0p2 rootwait rw\0" \
-        "update_sd_firmware_filename=u-boot.imx\0" \
-        "update_sd_firmware=" \
-                "if test ${ip_dyn} = yes; then " \
-                        "setenv get_cmd dhcp; " \
-                "else " \
-                        "setenv get_cmd tftp; " \
-                "fi; " \
-                "if mmc dev ${mmcdev}; then "   \
-                        "if ${get_cmd} ${update_sd_firmware_filename}; then " \
-                                "setexpr fw_sz ${filesize} / 0x200; " \
-                                "setexpr fw_sz ${fw_sz} + 1; "  \
-                                "mmc write ${loadaddr} 0x2 ${fw_sz}; " \
-                        "fi; "  \
-                "fi;\0" \
-        "mmcargs=setenv bootargs quiet console=${console},${baudrate} " \
-                "root=${mmcroot};\0" \
-        "loadbootscript=" \
-                "load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${file_prefix}${script};\0" \
-        "bootscript=echo Running bootscript from mmc ...; " \
-                "source;\0" \
-        "autodetectfdt=if test ${cpu} = 6SOLO || test ${cpu} = 6DL; then " \
-                        "setenv fdt_prefix imx6dl; " \
-                "else " \
-                        "setenv fdt_prefix imx6q; " \
-                "fi; " \
-                "if test ${board} = mx6-cubox-i; then " \
-                        "setenv fdt_file ${fdt_prefix}-cubox-i.dtb; " \
-                "elif test ${board} = mx6-hummingboard; then " \
-                        "setenv fdt_file ${fdt_prefix}-hummingboard.dtb; " \
-                "else " \
-                        "setenv fdt_file ${fdt_prefix}-hummingboard2.dtb; " \
-                "fi;\0" \
-        "loadbootenv=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${file_prefix}${bootenv};\0" \
-        "loadfdt=if test ${boottype} = mmc; then " \
-                     "load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${file_prefix}${fdt_file}; " \
-		"else " \
-                     "${get_cmd} ${fdt_addr} ${fdt_file}; " \
-		"fi;\0 " \
-        "loadramdisk=if test ${boottype} = mmc; then " \
-                     "load mmc ${mmcdev}:${mmcpart} ${ramdisk_addr} ${file_prefix}${ramdisk_file}; " \
-		"else " \
-                     "${get_cmd} ${ramdisk_addr} ${ramdisk_file}; " \
-		"fi;\0 " \
-        "loadbootfile=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${file_prefix}${bootfile};\0" \
-        "importbootenv=echo Importing environment from mmc${mmcdev} ...; " \
-                "env import -t ${loadaddr} ${filesize};\0" \
-        "autoboot=echo Booting ${boot_file}; " \
-		"if test ${boot_file} = zImage; then " \
-		    "bootz ${loadaddr} ${ramdisk_addr} ${fdt_addr}; " \
-		"else " \
-		    "bootm ${loadaddr} ${ramdisk_addr} ${fdt_addr}; " \
-		"fi;\0 " \
-	"bootit=setenv boot_file ${bootfile}; " \
-		"fdt_addr_bak=${fdt_addr}; " \
-                "if test -n ${ramdisk_file}; then " \
-		    "if run loadramdisk; then " \
-			"echo Loaded ${ramdisk_file}; " \
-		    "else " \
-			"setenv ramdisk_addr -; " \
-		    "fi; " \
-		"else " \
-		    "setenv ramdisk_addr -; " \
-                "fi; " \
-                "if test ${boot_file} = zImage; then " \
-                    "if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-                        "if run loadfdt; then " \
-			    "echo Loaded ${fdt_file}; " \
-                        "else " \
-			    "setenv fdt_addr; " \
-                            "if test ${boot_fdt} = try; then " \
-                                  "echo WARN: Cannot load the DTB and boot file is type zImage;" \
-                                  "echo if you have not appended a dtb to the file it may;" \
-                                  "echo hang after displaying Starting kernel...;" \
-                                  "echo ;" \
-                            "else " \
-                                  "echo WARN: Cannot load the DT; " \
-                            "fi; " \
-                        "fi; " \
-                    "else " \
-			"setenv fdt_addr; "\
-                    "fi; " \
-                "else " \
-			"setenv fdt_addr; " \
-                "fi; " \
-                "run autoboot; " \
-		"setenv fdt_addr ${fdt_addr_bak};\0 " \
-        "mmcboot=echo Booting from mmc ...; " \
-                "run mmcargs; " \
-                "setenv boottype mmc; " \
-                "run bootit;\0 " \
-        "netargs=setenv bootargs console=${console},${baudrate} " \
-                "root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp;\0" \
-        "netboot=echo Booting from net ...; " \
-                "run netargs; " \
-                "setenv boottype net; " \
-                "if test ${ip_dyn} = yes; then " \
-                    "setenv get_cmd dhcp; " \
-                "else " \
-                    "setenv get_cmd tftp; " \
-                "fi; " \
-                "if test ${bootfile} = auto; then " \
-                     "setenv bootfile zImage; " \
-                     "if ${get_cmd} ${bootfile}; then " \
-                         "run bootit; " \
-                     "else " \
-                         "setenv bootfile uImage; " \
-                     "fi; " \
-                " fi; " \
-                "${get_cmd} ${bootfile}; " \
-                "run bootit;\0 "
-
 #define CONFIG_BOOTCOMMAND \
-	   "mmc dev ${mmcdev}; if mmc rescan; then " \
-               "for prefix in ${boot_prefixes}; do " \
-		   "setenv file_prefix ${prefix}; " \
-		   "if run loadbootscript; then " \
-			   "run bootscript; " \
-		   "else " \
-			   "run autodetectfdt; " \
-			   "if run loadbootenv; then " \
-				   "run importbootenv; " \
-			   "fi; " \
-			   "if test -n ${serverip}; then " \
-				   "run netboot; " \
-			   "fi; " \
-                           "if test ${bootfile} = auto; then " \
-                                   "setenv origbootfile auto; " \
-                                   "setenv bootfile zImage; " \
-                                   "if run loadbootfile; then " \
-                                        "run mmcboot; " \
-                                   "else " \
-                                        "setenv bootfile uImage; " \
-                                   "fi; " \
-                           "fi; " \
-			   "if run loadbootfile; then " \
-				   "run mmcboot; " \
-			   "else " \
-				   "setenv bootfile ${origbootfile}; " \
-			   "fi; " \
-		   "fi; " \
-	       "done; " \
-	   "fi; " \
-	   "run netboot;\0 "
+  "echo INFO: creating environment; " \
+  "setenv console ttymxc0; " \
+  "setenv silent yes; " \
+  /* common settings for where to find things */ \
+  "setenv mmcdev " __stringify(CONFIG_SYS_MMC_ENV_DEV) "; " \
+  "setenv prefix /boot/; " \
+  "setenv loadaddr 0x10800000; " \
+  /* more, updated as we go */ \
+  "setenv mmcpart 3; " \
+  "setenv mmcroot /dev/mmcblk0p1; " \
+  /* how to load env from file */ \
+  "setenv envfile uEnv.txt; " \
+  "setenv loadenv 'load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${prefix}${envfile};'; " \
+  /* how to load splash image */ \
+  "setenv splashfile splash.bmp; " \
+  "setenv splashaddr 0x17000000; " \
+  "setenv splashpos m,m; " \
+  "setenv loadsplash 'load mmc ${mmcdev}:${mmcpart} ${splashaddr} ${prefix}${splashfile} && bmp d ${splashaddr};'; " \
+  /* custom command container, noop by default */ \
+  "setenv mmcargs 'setenv mmcroot ${mmcroot};'; " \
+  /* how to set bootargs */ \
+  "setenv loadbootargs 'setenv bootargs root=${mmcroot} rootfstype=ext4 rootflags=data=writeback rootwait ro fsck.mode=force fsck.repair=yes console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 quiet consoleblank=0;'; " \
+  /* how to load kernel image */ \
+  "setenv image zImage; " \
+  "setenv bootm_size 0x10000000; " \
+  "setenv loadimage 'load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${prefix}${image};'; " \
+  /* how to load device tree*/ \
+  "setenv fdtfile imx6q-hummingboard2.dtb; " \
+  "setenv fdtaddr 0x18000000; " \
+  "setenv loadfdt 'load mmc ${mmcdev}:${mmcpart} ${fdtaddr} ${prefix}${fdtfile};'; " \
+  /* actual script starts here */ \
+  "echo INFO: scanning for MMC; " \
+  "mmc dev ${mmcdev}; " \
+  "if mmc rescan; then " \
+    /* load uEnv.txt from boot partition, or assume first partition is root */ \
+    "echo INFO: loading uEnv.txt from data partition (3); " \
+    "if run loadenv; then " \
+      "env import -t ${loadaddr} ${filesize}; " \
+    "else " \
+      "setenv mmcpart 1; " \
+    "fi; " \
+    /* everything else is loaded from root partition (${mmcpart}) */ \
+    "echo INFO: loading uEnv.txt from root partition; " \
+    "if run loadenv; then " \
+      "env import -t ${loadaddr} ${filesize}; " \
+    "fi; " \
+    "echo INFO: loading splash image; " \
+    "run loadsplash; " \
+    "echo INFO: running custom commands; " \
+    "run mmcargs; " \
+    "echo INFO: booting...; " \
+    "run loadbootargs; " \
+    "if run loadimage; then " \
+      "if run loadfdt; then " \
+        "bootz ${loadaddr} - ${fdtaddr}; " \
+      "fi; " \
+    "fi; " \
+    "echo ERROR: missing files; " \
+  "else " \
+    "echo ERROR: missing MMC; " \
+  "fi;\0"
 
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_LONGHELP
