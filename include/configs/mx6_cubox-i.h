@@ -201,7 +201,7 @@
   "setenv loadimage 'load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${prefix}${image};'; " \
   "setenv loadusbimage 'load usb 0:1 ${loadaddr} ${prefix}${image};'; " \
   /* how to load device tree*/ \
-  "setenv fdtfile imx6q-hummingboard2.dtb; " \
+  "setenv fdtfile imx6q-cubox-i.dtb; " \
   "setenv fdtaddr 0x18000000; " \
   "setenv loadfdt 'load mmc ${mmcdev}:${mmcpart} ${fdtaddr} ${prefix}${fdtfile};'; " \
   "setenv loadusbfdt 'load usb 0:1 ${fdtaddr} ${prefix}${fdtfile};'; " \
