@@ -203,9 +203,13 @@
   /* how to load device tree*/ \
   "setenv fdtfile imx6q-cubox-i.dtb; " \
   "setenv fdtaddr 0x18000000; " \
+  "setenv detectfdt 'if test ${board} = mx6-cubox-i; then setenv fdtfile imx6q-cubox-i.dtb; elif test ${board} = mx6-hummingboard2; then setenv fdtfile imx6q-hummingboard2.dtb; fi;'; " \
   "setenv loadfdt 'load mmc ${mmcdev}:${mmcpart} ${fdtaddr} ${prefix}${fdtfile};'; " \
   "setenv loadusbfdt 'load usb 0:1 ${fdtaddr} ${prefix}${fdtfile};'; " \
   /* actual script starts here */ \
+  "echo INFO: detecting board; " \
+  "run detectfdt; " \
+  "env print fdtfile; " \
   "echo INFO: attempting USB recovery; " \
   "usb start; " \
   "run loadusbenv; " \
