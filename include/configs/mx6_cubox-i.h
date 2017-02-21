@@ -35,10 +35,16 @@
 #define CONFIG_BOARD_EARLY_INIT_F
 #define CONFIG_BOARD_LATE_INIT
 #define CONFIG_MXC_GPIO
+#define CONFIG_CMD_GPIO
 
 #define CONFIG_CMD_FUSE
 #ifdef CONFIG_CMD_FUSE
 #define CONFIG_MXC_OCOTP
+#endif
+
+#ifdef CONFIG_HW_WATCHDOG
+#define CONFIG_IMX_WATCHDOG
+#define CONFIG_WATCHDOG_TIMEOUT_MSECS	30000
 #endif
 
 #define CONFIG_MXC_UART
@@ -201,9 +207,9 @@
   "setenv loadimage 'load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${prefix}${image};'; " \
   "setenv loadusbimage 'load usb 0:1 ${loadaddr} ${prefix}${image};'; " \
   /* how to load device tree*/ \
-  "setenv fdtfile imx6q-cubox-i.dtb; " \
+  "setenv fdtfile imx6q-cubox-i${somrev}.dtb; " \
   "setenv fdtaddr 0x18000000; " \
-  "setenv detectfdt 'if test ${board} = mx6-cubox-i; then setenv fdtfile imx6q-cubox-i.dtb; elif test ${board} = mx6-hummingboard2; then setenv fdtfile imx6q-hummingboard2.dtb; fi;'; " \
+  "setenv detectfdt 'if test ${board} = mx6-cubox-i; then setenv fdtfile imx6q-cubox-i${somrev}.dtb; elif test ${board} = mx6-hummingboard2; then setenv fdtfile imx6q-hummingboard2${somrev}.dtb; fi;'; " \
   "setenv loadfdt 'load mmc ${mmcdev}:${mmcpart} ${fdtaddr} ${prefix}${fdtfile};'; " \
   "setenv loadusbfdt 'load usb 0:1 ${fdtaddr} ${prefix}${fdtfile};'; " \
   /* actual script starts here */ \
