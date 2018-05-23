@@ -212,8 +212,8 @@
   /* custom command container, noop by default */ \
   "setenv mmcargs 'setenv mmcroot ${mmcroot};'; " \
   /* how to set bootargs */ \
-  "setenv basebootargs 'console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 quiet consoleblank=0'; " \
-  "setenv extrabootargs 'fec.disable_giga=1 logo.nologo=1'; " \
+  "setenv basebootargs 'console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 quiet consoleblank=0 fec.disable_giga=1 logo.nologo=1 vmalloc=320M'; " \
+  "setenv extrabootargs ''; " \
   "setenv loadbootargs 'setenv bootargs root=${mmcroot} rootfstype=ext4 rootflags=data=writeback rootwait ro fsck.mode=force fsck.repair=yes ${basebootargs} ${extrabootargs};'; " \
   "setenv loadusbbootargs 'setenv bootargs root=/dev/sda1 rootfstype=ext4 rootwait ${basebootargs} ${extrabootargs};'; " \
   /* how to load kernel image */ \
