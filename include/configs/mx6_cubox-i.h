@@ -178,9 +178,16 @@
 #endif
 
 #define CONFIG_PREBOOT \
-  "setenv stdin serial; " \
-  "setenv stdout serial; " \
-  "setenv stderr serial; "
+	"if hdmidet; then " \
+		"usb start; "		       \
+		"setenv stdin  serial,usbkbd; "\
+		"setenv stdout serial,vga; "   \
+		"setenv stderr serial,vga; "   \
+	"else " \
+		"setenv stdin  serial; " \
+		"setenv stdout serial; " \
+		"setenv stderr serial; " \
+	"fi;"
 
 
 /* Vivi custom settings */
@@ -192,7 +199,6 @@
 #define CONFIG_BOOTCOMMAND \
   "echo INFO: creating environment; " \
   "setenv console ttymxc0; " \
-  "setenv silent yes; " \
   /* common settings for where to find things */ \
   "setenv mmcdev " __stringify(CONFIG_SYS_MMC_ENV_DEV) "; " \
   "setenv prefix /boot/; " \
@@ -212,9 +218,9 @@
   /* custom command container, noop by default */ \
   "setenv mmcargs 'setenv mmcroot ${mmcroot};'; " \
   /* how to set bootargs */ \
-  "setenv basebootargs 'console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 quiet consoleblank=0 logo.nologo=1 vmalloc=320M'; " \
+  "setenv basebootargs 'console=ttymxc0,115200 video=mxcfb0:dev=hdmi,1920x1080M@60 logo.nologo=1 vmalloc=320M'; " \
   "setenv custombootargs ''; " \
-  "setenv loadbootargs 'setenv bootargs root=${mmcroot} rootfstype=ext4 rootflags=data=writeback rootwait ro fsck.mode=force fsck.repair=yes ${basebootargs} ${custombootargs};'; " \
+  "setenv loadbootargs 'setenv bootargs root=${mmcroot} rootfstype=ext4 rootwait ro fsck.mode=force fsck.repair=yes ${basebootargs} ${custombootargs};'; " \
   "setenv loadusbbootargs 'setenv bootargs root=/dev/sda1 rootfstype=ext4 rootwait ${basebootargs} ${custombootargs};'; " \
   /* how to load kernel image */ \
   "setenv image zImage; " \
