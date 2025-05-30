@@ -273,6 +273,32 @@
     "echo ERROR: missing MMC; " \
   "fi;\0"
 
+/* Disable dangerous execution commands */
+#undef CONFIG_CMD_BOOTD
+#undef CONFIG_CMD_GO
+#undef CONFIG_CMD_ELF
+
+/* Disable serial loading */
+#undef CONFIG_CMD_LOADB
+#undef CONFIG_CMD_LOADS
+#undef CONFIG_CMD_LOADX
+#undef CONFIG_CMD_LOADY
+
+/* Environment manipulation */
+#undef CONFIG_CMD_EDITENV
+#undef CONFIG_CMD_SAVEENV
+
+/* Flash/storage access */
+#undef CONFIG_CMD_FLASH
+#undef CONFIG_CMD_IMLS
+#undef CONFIG_FS_EXT4
+#undef CONFIG_CMD_EXT4
+
+/* Potentially dangerous utilities */
+#undef CONFIG_CMD_ITEST
+#undef CONFIG_CMD_SOURCE
+#undef CONFIG_CMD_XIMG
+
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_HUSH_PARSER
